@@ -1,7 +1,9 @@
+import Geolocation from 'react-native-geolocation-service';
 import {View, Text, Alert, SafeAreaView, StyleSheet, ActivityIndicator,
-         ScrollView, RefreshControl, Image } from 'react-native'
+         ScrollView, RefreshControl, Image, Dimensions, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react' 
 import * as location from 'expo-location'
+import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
 
 const openWhaterKey = 'f975e54e09d653cbaa734f1ef8fae551'
 let url = 'https://home.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}';
@@ -67,11 +69,65 @@ const Weather = () => {
                     <image
                     style={styles.largeIcon}
                     source={{
-                        uri: 'http://openwathermap.org/img/wn/${}'
+                        uri: 'http://openwathermap.org/img/wn/${current.icon}@4x.png',
                     }}
                     />
-
+                    <text style={styles.currentTemp}>
+                        {Math.round(forecast.current.temp)}°C
+                    </text>
                 </view>
+
+                <text style={styles.currentDescription}>
+                    {current.currentDescription}
+                </text>
+
+                <View style={styles.extraInfo}>
+                    <view style={styles.info}>
+                        <image
+                            source={require('../asets/humidity.png')}
+                            style={{width:40,height:40, borderRadius:40/2, marginLeft:50}}
+                        />
+                        <text style={styles.text}>
+                            {forecast.current.humidity}%
+                        </text>
+                        <text style={styles.text}>
+                            Humidity
+                        </text>
+                    </view>
+                </View>
+
+                <view style={styles.subtitle}>
+                    <text style={styles.subtitle}>Hourly forecast</text>
+                </view>
+
+                <FlatList
+                    horizontal
+                    data={forecast.hourly.slice(0,24)}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={(hour) => {
+                        const weather = hour.item.weather[0];
+                        var dt = new Date(hour.item.dt * 1000);
+                        return(
+                            <view style={styles.hour}>
+                                <text style={{fontWeight: 'bold', color:'#346751'}}>
+                                    {dt.toLocaleDateString().replace(/:\d+/,'')}
+                                </text>
+                                <text style={{fontWeight: 'bold', color:'#346751'}}>
+                                    {Math.round(forecast.current.temp)}°C
+                                </text>
+                                <image
+                                    style={styles.samllIcon}
+                                    source={{
+                                        uri: 'http://openwathermap.org/img/wn/${weather.icon}@4x.png'
+                                    }}
+                                />
+                                <text style={{fontWeight:'bold', color:'#346751'}}>
+                                    {weather.description}
+                                </text>
+                            </view>
+                        )
+                    }}
+                />
             </ScrollView>
         </SafeAreaView>
     )
@@ -90,5 +146,59 @@ const styles = StyleSheet.create({
         fontSize:36,
         fontWeight:'bold',
         color:'#c84B31'
+    },
+    current:{
+        flexDirection:'row',
+        alignItems:'center',
+        alignContent:'center',
+    },
+    largeIcon:{
+        width:300,
+        height:250
+    },
+    currentTemp:{
+        fontSize:32,
+        fontWeight:'bold',
+        textAlign:'center',
+    },
+    currentDescription:{
+        width:'100%',
+        textAlign:'center',
+        fontWeight:'200',
+        fontSize:24,
+        marginBottom:5
+    },
+    info:{
+        width: Dimensions.get('screen').width/2.5,
+        backgroundColor:'rgba(0,0,0,0.5)',
+        padding:10,
+        borderRadius:15,
+        justifyContent:'center'
+    },
+    extraInfo:{
+        flexDirection:'row',
+        marginTop:20,
+        justifyContent:'space-between',
+        padding:10
+    },
+    text:{
+        fontSize:20,
+        color:'#fff',
+        textAlign:'center'
+    },
+    subtitle:{
+        fontSize:24,
+        maringVertical:12,
+        merginLeft:7,
+        color:'#C84B31',
+        fontWeight:'bold'
+    },
+    hour:{
+        padding:6,
+        alignItems:'center',
+    },
+    samllIcon:{
+        width:100,
+        height:100
     }
 })
