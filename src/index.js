@@ -1,4 +1,4 @@
-import Geolocation from 'react-native-geolocation-service';
+//import Geolocation from 'react-native-geolocation-service';
 import {View, Text, Alert, SafeAreaView, StyleSheet, ActivityIndicator,
          ScrollView, RefreshControl, Image, Dimensions, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react' 
@@ -84,7 +84,7 @@ const Weather = () => {
                 <View style={styles.extraInfo}>
                     <view style={styles.info}>
                         <image
-                            source={require('../asets/humidity.png')}
+                            source={require('../assets/humidity.png')}
                             style={{width:40,height:40, borderRadius:40/2, marginLeft:50}}
                         />
                         <text style={styles.text}>
