@@ -1,4 +1,5 @@
 //import Geolocation from 'react-native-geolocation-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, Text, Alert, SafeAreaView, StyleSheet, ActivityIndicator,
          ScrollView, RefreshControl, Image, Dimensions, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react' 
@@ -19,6 +20,30 @@ const Weather = () => {
         if (status !== 'granted') {
             Alert.alert('Permission to access location was denied'); // if permission is denied, show an alert
         }
+             const Weather = () => {
+  // ...
+
+  useEffect(() => {
+    const loadForecast = async () => {
+      // Check if forecast data exists in local storage
+      const storedForecast = await AsyncStorage.getItem('forecast');
+
+      if (storedForecast) {
+        setForecast(JSON.parse(storedForecast));
+      } else {
+        // ... your existing code to fetch and set forecast data ...
+
+        // Save the forecast data to local storage
+        AsyncStorage.setItem('forecast', JSON.stringify(data));
+      }
+      setRefreshing(false);
+    };
+
+    loadForecast();
+  }, []);
+
+  // ...
+};
 
         // get the current location
         let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
